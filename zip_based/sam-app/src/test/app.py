@@ -1,6 +1,5 @@
 import json
 from os import environ
-import numpy as np
 
 # import requests
 

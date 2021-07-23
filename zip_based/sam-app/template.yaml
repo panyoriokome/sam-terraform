@@ -26,6 +26,21 @@ Resources:
           Properties:
             Path: /hello
             Method: get
+  TestFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: src/test/
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          NAME: !Ref Name
+      Events:
+        Test:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /test
+            Method: get
 
 Parameters:
   Name:
