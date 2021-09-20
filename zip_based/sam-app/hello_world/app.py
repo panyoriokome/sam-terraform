@@ -1,8 +1,7 @@
 import json
 from os import environ
-import numpy as np
 
-# import requests
+import requests
 
 
 def lambda_handler(event, context):

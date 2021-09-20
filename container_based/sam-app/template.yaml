@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  sam-app
+  python3.8
 
   Sample SAM Template for sam-app
 
@@ -14,37 +14,21 @@ Resources:
   HelloWorldFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: hello_world/
-      Handler: app.lambda_handler
-      Runtime: python3.8
-      Layers:
-        - !Ref RequestsLayer
-      Environment:
-        Variables:
-          NAME: !Ref Name
+      PackageType: Image
       Events:
         HelloWorld:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /hello
             Method: get
-  TestFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-    Properties:
-      CodeUri: src/test/
-      Handler: app.lambda_handler
-      Runtime: python3.8
+            PackageType: Image
       Layers:
-        - !Ref TestLayer
-      Environment:
-        Variables:
-          NAME: !Ref Name
-      Events:
-        Test:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            Path: /test
-            Method: get
+        - !Ref RequestsLayer
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: ./hello_world
+      DockerTag: python3.8-v1
+
   RequestsLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
@@ -65,10 +49,6 @@ Resources:
     Metadata:
       BuildMethod: python3.8
 
-Parameters:
-  Name:
-    Type: String
-
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
@@ -82,5 +62,3 @@ Outputs:
   HelloWorldFunctionIamRole:
     Description: "Implicit IAM Role created for Hello World function"
     Value: !GetAtt HelloWorldFunctionRole.Arn
-  HelloWorldApiDomain:
-    Value: !Sub "${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com"
